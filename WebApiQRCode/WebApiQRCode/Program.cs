@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebApiQRCode.Data;
 using WebApiQRCode.Data.Entities.Identity;
+using WebApiQRCode.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ var app = builder.Build();
 // {
 //     app.MapOpenApi();
 // }
+await app.SeedData();
+
 app.UseSwagger();
 app.UseSwaggerUI();
 

@@ -1,0 +1,18 @@
+[
+  {
+    "Email": "admin@gmail.com",
+    "FirstName": "Admin",
+    "LastName": "System",
+    "Image": "default.jpg",
+    "Roles": [ "admin" ],
+    "Password": "Admin123!"
+  },
+  {
+    "Email": "user@gmail.com",
+    "FirstName": "Лєна",
+    "LastName": "Головач",
+    "Image": "default.jpg",
+    "Roles": [ "user" ],
+    "Password": "User123!"
+  }
+]
