@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 string strConn = builder.Configuration
     .GetConnectionString("MyQRCodeConnection") ?? "";
-
 builder.Services.AddDbContext<QrCodeDbContext>(opt =>
     opt.UseNpgsql(strConn));
 

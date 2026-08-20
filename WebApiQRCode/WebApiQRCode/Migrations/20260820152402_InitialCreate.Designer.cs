@@ -12,7 +12,7 @@ using WebApiQRCode.Data;
 namespace WebApiQRCode.Migrations
 {
     [DbContext(typeof(QrCodeDbContext))]
-    [Migration("20260820114210_InitialCreate")]
+    [Migration("20260820152402_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -185,6 +185,18 @@ namespace WebApiQRCode.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Image")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");

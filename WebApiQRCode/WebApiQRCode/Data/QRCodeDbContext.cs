@@ -9,11 +9,10 @@ public class QrCodeDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
     public QrCodeDbContext(DbContextOptions<QrCodeDbContext> options)
         : base(options)
     { }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
         modelBuilder.Entity<UserRoleEntity>()
             .HasOne(ur => ur.User)
             .WithMany(u => u.UserRoles)
