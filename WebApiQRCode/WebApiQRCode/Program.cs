@@ -29,6 +29,17 @@ builder.Services.AddControllers();
 // builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
+const string reactCorsPolicy = "ReactClient";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(reactCorsPolicy, policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -41,7 +52,9 @@ await app.SeedData();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseCors(reactCorsPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();

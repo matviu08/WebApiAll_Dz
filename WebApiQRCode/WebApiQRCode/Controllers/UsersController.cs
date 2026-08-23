@@ -21,7 +21,7 @@ namespace WebApiQRCode.Controllers
                     Email = x.Email,
                     Image = x.Image,
                 }).ToListAsync();
-            return Ok();
+            return Ok(users);
         }
     }
 }
