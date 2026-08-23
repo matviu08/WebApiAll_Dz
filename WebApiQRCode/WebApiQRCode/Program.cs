@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using WebApiQRCode.Data;
 using WebApiQRCode.Data.Entities.Identity;
 using WebApiQRCode.Extensions;
+using WebApiQRCode.Interfaces;
+using WebApiQRCode.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,8 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
     })
     .AddEntityFrameworkStores<QrCodeDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
