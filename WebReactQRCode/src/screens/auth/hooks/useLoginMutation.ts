@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import type { ILogin, ILogin_Data } from "../types/ILogin.ts";
+import type { ILogin_Data } from "../types/ILogin.ts";
 import { LoginService } from "../services/login.service.ts";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../../context/AuthContext.tsx";
@@ -12,9 +12,9 @@ export const UseLoginMutation = () => {
     return useMutation({
         mutationKey: ["login-post"],
         mutationFn: (props: { data: ILogin_Data }) =>
-            LoginService.post(props).then((res) => res?.data as ILogin),
-        onSuccess: (data, variables) => {
-            login(data.token, variables.data.email);
+            LoginService.post(props).then((res) => res.data),
+        onSuccess: (data) => {
+            login(data.token);
             navigate(RouterEnum.MAIN);
         },
     });
