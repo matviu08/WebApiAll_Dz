@@ -3,3 +3,4 @@ export const API_URL = `${SERVER_URL}/api`;
 
 export const getUsersUrl = () => '/users';
 export const postLoginUrl = () => '/Account/Login';
+export const postRegisterUrl = () => '/Account/Register';
