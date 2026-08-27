@@ -1,6 +1,7 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import type { AxiosError } from "axios";
 import { UseRegisterMutation } from "./hooks/useRegisterMutation.ts";
+import type {IRegister_Data} from "./types/IRegister.ts";
 
 interface IApiErrorResponse {
     error?: string;
@@ -8,30 +9,29 @@ interface IApiErrorResponse {
 }
 
 const Register = () => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [form, setForm] = useState<IRegister_Data>({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        imageFile: null,
+    });
+
+    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
+    }
 
     const [fieldErrors, setFieldErrors] = useState<Record<string, string[]> | null>(null);
     const [generalError, setGeneralError] = useState<string | null>(null);
 
     const { mutateAsync, isPending } = UseRegisterMutation();
 
-    // прибираємо тимчасовий URL прев'ю при зміні/розмонтуванні
-    useEffect(() => {
-        return () => {
-            if (imagePreview) URL.revokeObjectURL(imagePreview);
-        };
-    }, [imagePreview]);
 
     const onImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] ?? null;
-        setImageFile(file);
-        setImagePreview(file ? URL.createObjectURL(file) : null);
+        setForm({ ...form, imageFile: file });
     };
 
     const fieldError = (name: string) => fieldErrors?.[name]?.[0];
@@ -43,7 +43,7 @@ const Register = () => {
 
         try {
             await mutateAsync({
-                data: { firstName, lastName, email, password, confirmPassword, imageFile },
+                data: form,
             });
         } catch (err) {
             const axiosError = err as AxiosError<IApiErrorResponse>;
@@ -65,8 +65,8 @@ const Register = () => {
                 <form className="space-y-4" onSubmit={onSubmit} noValidate>
                     <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center shrink-0">
-                            {imagePreview ? (
-                                <img src={imagePreview} alt="Прев'ю фото" className="w-full h-full object-cover" />
+                            {form.imageFile ? (
+                                <img src={URL.createObjectURL(form.imageFile)} alt="Прев'ю фото" className="w-full h-full object-cover" />
                             ) : (
                                 <span className="text-xs text-gray-400">Фото</span>
                             )}
@@ -90,9 +90,10 @@ const Register = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Ім'я</label>
                         <input
+                            name={"firstName"}
                             type="text"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
+                            value={form.firstName}
+                            onChange={onChangeHandler}
                             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         />
                         {fieldError("firstName") && <p className="text-red-500 text-xs mt-1">{fieldError("firstName")}</p>}
@@ -101,9 +102,10 @@ const Register = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Прізвище</label>
                         <input
+                            name={"lastName"}
                             type="text"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
+                            value={form.lastName}
+                            onChange={onChangeHandler}
                             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         />
                         {fieldError("lastName") && <p className="text-red-500 text-xs mt-1">{fieldError("lastName")}</p>}
@@ -112,9 +114,10 @@ const Register = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                         <input
+                            name={"email"}
                             type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={form.email}
+                            onChange={onChangeHandler}
                             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         />
                         {fieldError("email") && <p className="text-red-500 text-xs mt-1">{fieldError("email")}</p>}
@@ -123,9 +126,10 @@ const Register = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
                         <input
+                            name={"password"}
                             type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={form.password}
+                            onChange={onChangeHandler}
                             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         />
                         <p className="text-gray-400 text-xs mt-1">
@@ -137,9 +141,10 @@ const Register = () => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Підтвердження пароля</label>
                         <input
+                            name={"confirmPassword"}
                             type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            value={form.confirmPassword}
+                            onChange={onChangeHandler}
                             className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                         />
                         {fieldError("confirmPassword") && (
