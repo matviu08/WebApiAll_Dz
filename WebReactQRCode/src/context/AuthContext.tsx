@@ -12,7 +12,7 @@ interface IAuthContextValue extends IAuthState {
     logout: () => void;
 }
 
-const AUTH_STORAGE_KEY = "auth";
+export const AUTH_STORAGE_KEY = "auth";
 
 const getInitialState = (): IAuthState => {
     const token = localStorage.getItem(AUTH_STORAGE_KEY);

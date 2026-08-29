@@ -3,6 +3,7 @@ import Main from "./screens/main/Main.tsx";
 import Header from "./components/Header.tsx";
 import Login from "./screens/auth/Login.tsx";
 import Register from "./screens/auth/Register.tsx";
+import Profile from "./screens/profile/Profile.tsx";
 
 function App() {
 
@@ -18,6 +19,9 @@ function App() {
               </Route>
               <Route path="/register">
                   <Route index element={<Register/>}></Route>
+              </Route>
+              <Route path="/profile">
+                  <Route index element={<Profile/>}></Route>
               </Route>
           </Routes>
       </>

@@ -19,7 +19,12 @@ const Header = () => {
 
             {isAuthenticated ? (
                 <div className="flex items-center gap-4">
-                    <span className="text-gray-600 text-sm">{email}</span>
+                    <Link
+                        to={RouterEnum.PROFILE}
+                        className="text-gray-600 text-sm hover:text-indigo-600 hover:underline transition-colors"
+                    >
+                        {email}
+                    </Link>
                     <button
                         onClick={handleLogout}
                         className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-medium transition-colors"

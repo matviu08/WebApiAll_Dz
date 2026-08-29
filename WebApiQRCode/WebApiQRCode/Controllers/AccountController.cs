@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -61,6 +63,35 @@ namespace WebApiQRCode.Controllers
             {
                 return BadRequest(new { Error = ex.Message });
             }
+        }
+        
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email)
+                        ?? User.FindFirstValue("email");
+
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized();
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound();
+
+            var roles = await userManager.GetRolesAsync(user);
+
+            var model = new ProfileModel
+            {
+                Id = user.Id,
+                Email = user.Email ?? string.Empty,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Image = user.Image,
+                Roles = roles
+            };
+
+            return Ok(model);
         }
     }
 }
