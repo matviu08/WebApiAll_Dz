@@ -13,15 +13,9 @@ function App() {
           <Routes>
               <Route path="/">
                   <Route index element={<Main/>}></Route>
-              </Route>
-              <Route path="/login">
-                  <Route index element={<Login/>}></Route>
-              </Route>
-              <Route path="/register">
-                  <Route index element={<Register/>}></Route>
-              </Route>
-              <Route path="/profile">
-                  <Route index element={<Profile/>}></Route>
+                  <Route path="/login" element={<Login/>}></Route>
+                  <Route path="/register" element={<Register/>}></Route>
+                  <Route path="/profile" element={<Profile/>}></Route>
               </Route>
           </Routes>
       </>

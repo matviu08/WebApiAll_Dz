@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using WebApiQRCode.Data.Entities;
 using WebApiQRCode.Data.Entities.Identity;
 
 namespace WebApiQRCode.Data;
@@ -9,6 +10,8 @@ public class QrCodeDbContext : IdentityDbContext<UserEntity, RoleEntity, int>
     public QrCodeDbContext(DbContextOptions<QrCodeDbContext> options)
         : base(options)
     { }
+    
+    public DbSet<QrCodeEntity> QrCodes { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
