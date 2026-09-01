@@ -97,7 +97,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(reactCorsPolicy, policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins(
+                "http://localhost:5173", 
+                "https://qrcodemaneger.freehosting.dev"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

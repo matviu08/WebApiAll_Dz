@@ -4,6 +4,7 @@ import Header from "./components/Header.tsx";
 import Login from "./screens/auth/Login.tsx";
 import Register from "./screens/auth/Register.tsx";
 import Profile from "./screens/profile/Profile.tsx";
+import QRCodeCreate from "./screens/qr-code/create/QRCodeCreate.tsx";
 
 function App() {
 
@@ -16,6 +17,9 @@ function App() {
                   <Route path="/login" element={<Login/>}></Route>
                   <Route path="/register" element={<Register/>}></Route>
                   <Route path="/profile" element={<Profile/>}></Route>
+                  <Route path="/qr-code">
+                         <Route path="create" element={<QRCodeCreate/>}/>
+                  </Route>
               </Route>
           </Routes>
       </>
