@@ -12,3 +12,8 @@ export interface ICreateQrCode {
     name: string;
     targetUrl: string;
 }
+
+export interface IUpdateQrCode {
+    name: string;
+    targetUrl: string;
+}

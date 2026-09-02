@@ -1,15 +1,16 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../context/AuthContext.tsx";
-import { useProfileQuery } from "../../hooks/useProfileQuery.ts";
-import { useQrCodesQuery } from "../../hooks/useQrCodesQuery.ts";
+import {useEffect} from "react";
+import {useNavigate} from "react-router";
+import {useAuth} from "../../context/AuthContext.tsx";
+import {useProfileQuery} from "../../hooks/useProfileQuery.ts";
+import {useQrCodesQuery} from "../../hooks/useQrCodesQuery.ts";
 import Loader from "../../components/Loader.tsx";
-import { RouterEnum } from "../../config/RouterEnum.ts";
-import { getImageUrl, SERVER_URL } from "../../config/api.config.ts";
+import {RouterEnum} from "../../config/RouterEnum.ts";
+import {getImageUrl, SERVER_URL} from "../../config/api.config.ts";
 import QRCode from "react-qr-code";
+import {useQRCodeDeactivateMutation} from "../../hooks/useQRCodeDeactivateMutation.ts";
 
 const Profile = () => {
-    const { isAuthenticated } = useAuth();
+    const {isAuthenticated} = useAuth();
     const navigate = useNavigate();
 
     const {
@@ -26,6 +27,8 @@ const Profile = () => {
     } = useQrCodesQuery();
 
 
+    const {mutateAsync: deactivateAsync, isPending: isDeactivating} = useQRCodeDeactivateMutation();
+
     console.log("qrCodes", qrCodes);
 
     useEffect(() => {
@@ -37,7 +40,7 @@ const Profile = () => {
     if (!isAuthenticated) return null;
 
     if (profileLoading || qrLoading) {
-        return <Loader />;
+        return <Loader/>;
     }
 
     if (profileError) {
@@ -57,12 +60,15 @@ const Profile = () => {
             .filter(Boolean)
             .join(" ") || "Без імені";
 
+
     return (
         <div className="max-w-6xl mx-auto px-4 py-10">
             <div className="flex justify-center">
-                <div className="w-full max-w-md p-8 space-y-6 bg-white border border-gray-200 rounded-2xl shadow-sm text-center">
+                <div
+                    className="w-full max-w-md p-8 space-y-6 bg-white border border-gray-200 rounded-2xl shadow-sm text-center">
 
-                    <div className="w-28 h-28 mx-auto rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                    <div
+                        className="w-28 h-28 mx-auto rounded-full bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
                         {imageUrl ? (
                             <img
                                 src={imageUrl}
@@ -119,12 +125,11 @@ const Profile = () => {
                         className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-medium text-sm transition shadow-sm flex items-center justify-center gap-2 shrink-0"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/>
                         </svg>
                         Створити QR-код
                     </button>
                 </div>
-
 
 
                 {qrError && (
@@ -208,14 +213,39 @@ const Profile = () => {
 
                                 </div>
 
-                                <a
-                                    href={qrUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="block text-center mt-5 w-full py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 font-medium"
-                                >
-                                    Перевірити QR
-                                </a>
+                                <div className="mt-5 space-y-2">
+                                    <a
+                                        href={qrUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="block text-center w-full py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 font-medium"
+                                    >
+                                        Перевірити QR
+                                    </a>
+
+                                    {qr.isActive && (
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => navigate(`${RouterEnum.QRCODE_EDIT}/${qr.id}`)}
+                                                className="w-full py-2.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-medium transition"
+                                            >
+                                                Редагувати
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    if (window.confirm("Деактивувати цей QR-код? Він більше не працюватиме.")) {
+                                                        deactivateAsync({id: qr.id});
+                                                    }
+                                                }}
+                                                disabled={isDeactivating}
+                                                className="w-full py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-medium transition disabled:opacity-60"
+                                            >
+                                                Деактивувати
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
 
                             </div>
                         );

@@ -5,6 +5,7 @@ import Login from "./screens/auth/Login.tsx";
 import Register from "./screens/auth/Register.tsx";
 import Profile from "./screens/profile/Profile.tsx";
 import QRCodeCreate from "./screens/qr-code/create/QRCodeCreate.tsx";
+import QRCodeEdit from "./screens/qr-code/edit/QRCodeEdit.tsx";
 
 function App() {
 
@@ -18,7 +19,8 @@ function App() {
                   <Route path="/register" element={<Register/>}></Route>
                   <Route path="/profile" element={<Profile/>}></Route>
                   <Route path="/qr-code">
-                         <Route path="create" element={<QRCodeCreate/>}/>
+                      <Route path="create" element={<QRCodeCreate/>}/>
+                      <Route path="edit/:id" element={<QRCodeEdit/>}/>
                   </Route>
               </Route>
           </Routes>

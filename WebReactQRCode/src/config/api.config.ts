@@ -6,6 +6,8 @@ export const postLoginUrl = () => '/Account/Login';
 export const postRegisterUrl = () => '/Account/Register';
 export const getProfileUrl = () => '/Account/Profile';
 export const getQrCodesUrl = () => '/QrCodes';
+export const getQrCodeUrl = (id: number) => `/QrCodes/${id}`;
+export const getQrCodeDeactivateUrl = (id: number) => `/QrCodes/${id}/deactivate`;
 
 export const getImageUrl = (
     image?: string | null,

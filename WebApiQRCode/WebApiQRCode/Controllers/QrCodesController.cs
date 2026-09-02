@@ -75,6 +75,68 @@ public class QrCodesController(QrCodeDbContext qrDbContext,
         return Ok();
     }
     
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateQrCode(
+        int id, UpdateQrCodeRequest model)
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email)
+                    ?? User.FindFirstValue("email");
+
+        if (string.IsNullOrEmpty(email))
+            return Unauthorized();
+
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+            return NotFound();
+
+        var qrCode = await qrDbContext.QrCodes
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == user.Id);
+
+        if (qrCode == null)
+            return NotFound("QR Code не знайдено");
+
+        if (!qrCode.IsActive)
+            return BadRequest("Деактивований QR Code не можна редагувати");
+
+        qrCode.Name = model.Name;
+        qrCode.TargetUrl = model.TargetUrl;
+        qrCode.UpdatedAt = DateTime.UtcNow;
+
+        await qrDbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpPatch("{id:int}/deactivate")]
+    public async Task<IActionResult> DeactivateQrCode(int id)
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email)
+                    ?? User.FindFirstValue("email");
+
+        if (string.IsNullOrEmpty(email))
+            return Unauthorized();
+
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+            return NotFound();
+
+        var qrCode = await qrDbContext.QrCodes
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == user.Id);
+
+        if (qrCode == null)
+            return NotFound("QR Code не знайдено");
+
+        if (!qrCode.IsActive)
+            return BadRequest("QR Code вже деактивований");
+
+        qrCode.IsActive = false;
+        qrCode.UpdatedAt = DateTime.UtcNow;
+
+        await qrDbContext.SaveChangesAsync();
+
+        return Ok();
+    }
+    
     [HttpGet("view/{code}")]
     [AllowAnonymous]
     public async Task<IActionResult> RedirectToTarget(string code)
