@@ -107,6 +107,39 @@ public class QrCodesController(QrCodeDbContext qrDbContext,
         return Ok();
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetQrCode(int id)
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email)
+                    ?? User.FindFirstValue("email");
+
+        if (string.IsNullOrEmpty(email))
+            return Unauthorized();
+
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+            return NotFound();
+
+        var qrCode = await qrDbContext.QrCodes
+            .Where(x => x.Id == id && x.UserId == user.Id)
+            .Select(x => new QrCodeItemModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Code = x.Code,
+                TargetUrl = x.TargetUrl,
+                IsActive = x.IsActive,
+                CreatedAt = x.CreatedAt.ToString("dd.MM.yyyy"),
+                ScanCount = x.ScanCount
+            })
+            .FirstOrDefaultAsync();
+
+        if (qrCode == null)
+            return NotFound();
+
+        return Ok(qrCode);
+    }
+    
     [HttpPatch("{id:int}/deactivate")]
     public async Task<IActionResult> DeactivateQrCode(int id)
     {

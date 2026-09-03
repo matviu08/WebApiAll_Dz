@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {useAuth} from "../../context/AuthContext.tsx";
 import {useProfileQuery} from "../../hooks/useProfileQuery.ts";
@@ -28,6 +28,9 @@ const Profile = () => {
 
 
     const {mutateAsync: deactivateAsync, isPending: isDeactivating} = useQRCodeDeactivateMutation();
+
+    const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
+    const [selectedQrId, setSelectedQrId] = useState<number | null>(null);
 
     console.log("qrCodes", qrCodes);
 
@@ -167,7 +170,10 @@ const Profile = () => {
                                     {qr.name}
                                 </h3>
 
-                                <p className="text-sm text-gray-500 mt-1 break-all">
+                                <p
+                                    className="text-sm text-gray-500 mt-1 truncate"
+                                    title={qr.targetUrl}
+                                >
                                     {qr.targetUrl}
                                 </p>
 
@@ -234,9 +240,8 @@ const Profile = () => {
 
                                             <button
                                                 onClick={() => {
-                                                    if (window.confirm("Деактивувати цей QR-код? Він більше не працюватиме.")) {
-                                                        deactivateAsync({id: qr.id});
-                                                    }
+                                                    setSelectedQrId(qr.id);
+                                                    setIsDeactivateModalOpen(true);
                                                 }}
                                                 disabled={isDeactivating}
                                                 className="w-full py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-medium transition disabled:opacity-60"
@@ -252,6 +257,78 @@ const Profile = () => {
                     })}
 
                 </div>
+                {isDeactivateModalOpen && (
+                    <div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+                        onClick={() => {
+                            if (!isDeactivating) {
+                                setIsDeactivateModalOpen(false);
+                                setSelectedQrId(null);
+                            }
+                        }}
+                    >
+                        <div
+                            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="flex items-center justify-center w-12 h-12 mx-auto rounded-full bg-red-100">
+                                <svg
+                                    className="w-6 h-6 text-red-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14A2 2 0 003.84 21h16.32a2 2 0 001.73-3.14l-8.18-14a2 2 0 00-3.42 0z"
+                                    />
+                                </svg>
+                            </div>
+
+                            <h2 className="mt-4 text-xl font-bold text-center text-gray-900">
+                                Деактивувати QR-код?
+                            </h2>
+
+                            <p className="mt-2 text-center text-gray-500">
+                                Після деактивації цей QR-код більше не працюватиме.
+                                Ви впевнені, що хочете продовжити?
+                            </p>
+
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setIsDeactivateModalOpen(false);
+                                        setSelectedQrId(null);
+                                    }}
+                                    disabled={isDeactivating}
+                                    className="w-full py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition disabled:opacity-60"
+                                >
+                                    Скасувати
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        if (selectedQrId === null) return;
+
+                                        await deactivateAsync({id: selectedQrId});
+
+                                        setIsDeactivateModalOpen(false);
+                                        setSelectedQrId(null);
+                                    }}
+                                    disabled={isDeactivating}
+                                    className="w-full py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition disabled:opacity-60"
+                                >
+                                    {isDeactivating ? "Деактивація..." : "Деактивувати"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
             </div>
         </div>
     );

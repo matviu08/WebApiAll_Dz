@@ -16,7 +16,7 @@ const Main = () => {
 
     return (
         <div className="max-w-xl mx-auto mt-10 px-4 font-sans">
-            <h1 className="text-2xl font-bold mb-6">Список користувачів</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">Список користувачів</h1>
             <ul className="divide-y divide-gray-200">
                 {users?.map((user) => (
                     <li key={user.id} className="flex items-center gap-3 py-3">
